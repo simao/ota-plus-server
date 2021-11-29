@@ -11,7 +11,8 @@ trait ApiClientSupport {
 
   private implicit val _tracer = tracer
 
-  val userProfileApi = new UserProfileApi(conf, clientExec)
+  // val userProfileApi = new UserProfileApi(conf, clientExec)
+  val userProfileApi = new EmptyUserProfileApi(conf, clientExec)
 
   val deviceRegistryApi = new DeviceRegistryApi(conf, clientExec)
 

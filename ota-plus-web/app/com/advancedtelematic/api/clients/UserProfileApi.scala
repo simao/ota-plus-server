@@ -1,8 +1,8 @@
 package com.advancedtelematic.api.clients
 
 import java.util.UUID
-
 import akka.Done
+import akka.http.scaladsl.util.FastFuture
 import brave.play.{TraceData, ZipkinTraceServiceLike}
 import cats.syntax.option._
 import com.advancedtelematic.api._
@@ -11,9 +11,47 @@ import com.advancedtelematic.controllers.UserId
 import com.advancedtelematic.libats.data.DataType.Namespace
 import play.api.Configuration
 import play.api.libs.json._
-import play.api.mvc.Result
+import play.api.mvc.{Result, Results}
 
 import scala.concurrent.{ExecutionContext, Future}
+
+class EmptyUserProfileApi(override val conf: Configuration, override val apiExec: ApiClientExec)(implicit tracer: ZipkinTraceServiceLike) extends UserProfileApi(conf, apiExec) {
+  override def getUser(userId: UserId)(implicit traceData: TraceData): Future[JsValue] =
+    FastFuture.successful(JsObject(Seq("defaultNamespace" -> JsString("default"))))
+
+  override def createUser(userId: UserId, name: String, email: String, ns: Option[Namespace])(implicit traceData: TraceData): Future[JsValue] =
+    FastFuture.successful(JsObject.empty)
+
+  override def updateDisplayName(userId: UserId, newName: String)(implicit executionContext: ExecutionContext, traceData: TraceData): Future[Done] =
+    FastFuture.successful(Done)
+
+  override def updateBillingInfo[T](userId: UserId, query: Map[String, Seq[String]], body: JsValue)(implicit traceData: TraceData): Future[Result] =
+    FastFuture.successful(Results.NoContent)
+
+  override def userOrganizations(userId: UserId)(implicit traceData: TraceData): Future[Set[UserOrganization]] =
+    FastFuture.successful(Set(UserOrganization(Namespace("default"), "default")))
+
+  override def namespaceIsAllowed(userId: UserId, namespace: Namespace)(implicit ec: ExecutionContext, traceData: TraceData): Future[Boolean] =
+    FastFuture.successful(true)
+
+  override def organizationMembershipEvents(namespace: Namespace, userId: UserId, limit: Int)(implicit traceData: TraceData): Future[JsValue] =
+    FastFuture.successful(JsObject.empty)
+
+  override def setNewDefaultOrganization(userId: UserId, newNamespace: Namespace)(implicit traceData: TraceData): Future[Result] =
+    FastFuture.successful(Results.NoContent)
+
+  override def userProfileRequest(userId: UserId, method: String, path: String, body: Option[JsValue])(implicit traceData: TraceData): Future[Result] =
+    FastFuture.successful(Results.NoContent)
+
+  override def organizationRequest(namespace: Namespace, userId: UserId, method: String, path: String, queryParams: Map[String, String], body: Option[JsValue])(implicit traceData: TraceData): Future[Result] =
+    FastFuture.successful(Results.NoContent)
+
+  override def organizationUserUiFeatures(namespace: Namespace, userId: UserId, email: Option[String], uiFeature: String, method: String)(implicit traceData: TraceData): Future[Result] =
+    FastFuture.successful(Results.NoContent)
+
+  override def getCredentialsBundle(namespace: Namespace, keyUuid: UUID)(implicit traceData: TraceData): Future[Result] =
+    FastFuture.successful(Results.NoContent)
+}
 
 class UserProfileApi(val conf: Configuration, val apiExec: ApiClientExec)(implicit tracer: ZipkinTraceServiceLike)
   extends OtaPlusConfig {

@@ -1,13 +1,13 @@
 package com.advancedtelematic.controllers
 
 import java.util.UUID
-
 import brave.play.ZipkinTraceServiceLike
 import brave.play.implicits.ZipkinTraceImplicits
 import com.advancedtelematic.api.Errors.{RemoteApiError, UnexpectedResponse}
 import com.advancedtelematic.api.{ApiClientExec, ApiClientSupport}
 import com.advancedtelematic.auth.oidc.OidcGateway
 import com.advancedtelematic.auth.{IdentityAction, IdentityClaims}
+
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logger}
 import play.api.libs.json._
@@ -37,7 +37,20 @@ class UserProfileController @Inject()(val conf: Configuration,
       case JsError(_) => None
     }).getOrElse(claims.name)
 
-  def getUserProfile: Action[AnyContent] = authAction.async { implicit request =>
+  def getUserProfile: Action[AnyContent] = authAction { implicit request =>
+    Ok(Json.obj(
+      "fullName" -> JsString("lol"),
+      "email"    -> JsString("lol@lol.pt"),
+      "picture"  -> JsNull,
+      "profile"  -> JsObject(Seq(
+        "defaultNamespace" -> JsString("default"),
+        "initialNamespace" -> JsString("default"),
+        "userId" -> JsString("default"),
+      ))
+    ))
+  }
+
+  def getUserProfile_2: Action[AnyContent] = authAction.async { implicit request =>
     val fut = for {
       claims  <- oidcGateway.getUserInfo(request.accessToken)
       profile <- userProfileApi.getUser(claims.userId)
@@ -103,4 +116,17 @@ class UserProfileController @Inject()(val conf: Configuration,
     userProfileApi.userProfileRequest(request.idToken.userId, request.method, path, request.body.asJson)
   }
 
+  def orgs(): Action[AnyContent] = authAction { implicit  req =>
+    Results.Ok(Json.arr(Json.obj("namespace" -> JsString("default"), "name" -> JsString("default"), "memberCount" -> JsNumber(2), "createdAt" -> JsString("1970-01-01T00:00:00Z"))))
+  }
+
+  def defaultOrg(): Action[AnyContent] = authAction { implicit  req =>
+    val j = """{"namespace":"default","name":"simao.mata's Organization","createdBy":"HERE-2573dcda-6ff2-4b85-8041-f5609e799ff5","createdAt":"1970-01-01T00:00:00Z"}"""
+      Results.Ok(Json.parse(j))
+  }
+
+  def contracts() = authAction { implicit  req =>
+    val j = """[{"user":"default","contract":"tc/2018-04/en/terms-and-conditions.html","accepted":"2018-12-13T09:33:59Z"}]"""
+    Results.Ok(Json.parse(j))
+  }
 }

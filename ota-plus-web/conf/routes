@@ -47,6 +47,9 @@ PUT     /user/profile                            com.advancedtelematic.controlle
 PUT     /user/profile/billing_info               com.advancedtelematic.controllers.UserProfileController.updateBillingInfo
 POST    /user/change_password                    com.advancedtelematic.controllers.UserProfileController.changePassword
 GET     /user/credentials/:uuid                  com.advancedtelematic.controllers.UserProfileController.getUserCredentialsBundle(uuid: UUID)
+GET     /user/organizations                com.advancedtelematic.controllers.UserProfileController.orgs
+GET     /user/organizations/default                com.advancedtelematic.controllers.UserProfileController.defaultOrg
+GET     /user/contracts                       com.advancedtelematic.controllers.UserProfileController.contracts
 GET     /user/*path                       com.advancedtelematic.controllers.UserProfileController.proxyRequest(path: String)
 POST    /user/*path                       com.advancedtelematic.controllers.UserProfileController.proxyRequest(path: String)
 PUT     /user/*path                       com.advancedtelematic.controllers.UserProfileController.proxyRequest(path: String)

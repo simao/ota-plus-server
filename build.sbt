@@ -8,7 +8,6 @@ lazy val Library = new {
     val MockWs          = "2.6.2"
     val LibAts          = "0.3.0-109-ge12f057"
     val LibTuf          = "0.7.1-6-gd36661d"
-    val Netty           = "4.1.19.Final"
     val ScalaCheck      = "1.13.4"
     val ScalaTestPlay   = "3.1.2"
     val Jose4j          = "0.6.3"
@@ -28,8 +27,6 @@ lazy val Library = new {
 
   lazy val LibTuf       = "com.advancedtelematic" %% "libtuf"        % Version.LibTuf
   lazy val LibTufServer = "com.advancedtelematic" %% "libtuf-server" % Version.LibTuf
-
-  val Netty = Seq("io.netty" % "netty-handler", "io.netty" % "netty-codec").map(_ % Version.Netty)
 }
 
 
@@ -164,8 +161,8 @@ lazy val `ota-plus-web` = project.in(file("ota-plus-web"))
     .settings(dockerSettings)
     .settings(PlaySettings.defaultScalaSettings)
     .settings(routesSettings)
-    .enablePlugins(BuildInfoPlugin, PlayScala, PlayNettyServer, GitVersioning)
-    .disablePlugins(PlayAkkaHttpServer)
+    .enablePlugins(BuildInfoPlugin, PlayScala, PlayAkkaHttpServer, GitVersioning)
+    .disablePlugins(PlayNettyServer)
     .settings(buildinfoSettings)
     .settings(sonarSettings)
 
