@@ -41,13 +41,17 @@ class EmptyUserProfileApi(override val conf: Configuration, override val apiExec
     FastFuture.successful(Results.NoContent)
 
   override def userProfileRequest(userId: UserId, method: String, path: String, body: Option[JsValue])(implicit traceData: TraceData): Future[Result] =
-    FastFuture.successful(Results.NoContent)
+    FastFuture.successful(Results.Ok(Json.arr()))
 
   override def organizationRequest(namespace: Namespace, userId: UserId, method: String, path: String, queryParams: Map[String, String], body: Option[JsValue])(implicit traceData: TraceData): Future[Result] =
     FastFuture.successful(Results.NoContent)
 
-  override def organizationUserUiFeatures(namespace: Namespace, userId: UserId, email: Option[String], uiFeature: String, method: String)(implicit traceData: TraceData): Future[Result] =
-    FastFuture.successful(Results.NoContent)
+  override def organizationUserUiFeatures(namespace: Namespace, userId: UserId, email: Option[String], uiFeature: String, method: String)(implicit traceData: TraceData): Future[Result] = {
+     val uiFeatures =
+       """[{"id":"cancel_campaign","name":"Cancel campaign","description":"In the device detail page and the campaign page, the member will be able to cancel a campaign for this environment.","isAllowed":true},{"id":"create_campaign","name":"Create campaign","description":"In the Homepage, the devices page and the campaign page, the member will be able to create campaigns for this environment.","isAllowed":true},{"id":"create_device_group","name":"Create device group","description":"In the Homepage and the devices page, the member will be able to create device groups for this environment.","isAllowed":true},{"id":"create_software_update","name":"Create software update","description":"In the Homepage and the update page, the member will be able to create software updates for this environment.","isAllowed":true},{"id":"delete_device","name":"Delete device","description":"In the device detail page, the member will be able to delete a device for this environment.","isAllowed":true},{"id":"delete_software","name":"Delete software","description":"In the software page, the member will be able to delete software for this environment.","isAllowed":true},{"id":"delete_software_version","name":"Delete software version","description":"In the software page, the member will be able to delete software versions for this environment.","isAllowed":true},{"id":"edit_software_comment","name":"Edit software comment","description":"In the software page, the member will be able to edit software comments for this environment.","isAllowed":true},{"id":"launch_single_device_update","name":"Launch single-device update","description":"In the device detail page, the member will be able to launch a single-device update for this environment.","isAllowed":true},{"id":"rename_device","name":"Rename device","description":"In the device detail page, the member will be able to rename a device for this environment.","isAllowed":true},{"id":"retry_failed_update","name":"Retry failed update","description":"In the campaign page, the member will be able to retry a failed update in a campaign for this environment.","isAllowed":true},{"id":"upload_software","name":"Upload software","description":"In the Homepage and the software page, the member will be able to upload software versions for this environment.","isAllowed":true}]
+       """
+    FastFuture.successful(Results.Ok(Json.parse(uiFeatures)))
+  }
 
   override def getCredentialsBundle(namespace: Namespace, keyUuid: UUID)(implicit traceData: TraceData): Future[Result] =
     FastFuture.successful(Results.NoContent)

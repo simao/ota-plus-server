@@ -463,7 +463,8 @@ export const FEATURE_CATEGORIES = {
 
 export const isFeatureEnabled = (features, featureId) => {
   if (features.length) {
-    return features.find(el => el.id === featureId).isAllowed;
+    var f = features.find(el => el.id === featureId);
+    return (f != undefined) && f.isAllowed;
   }
   return false;
 };
